@@ -1,4 +1,17 @@
-### FUND TRANSFER FLOW
+### 2. START MCS
+#### START ACCOUNT MCS
+```
+cd ./mcs-account
+go run ./cmd/main.go
+```
+
+#### START FUND TRANSFER MCS
+``` 
+cd ./mcs-fund-transfer
+go run ./cmd/main.go
+```
+
+### 2. FUND TRANSFER FLOW
 
 #### STEP 1: Start fund transfer workflow
 ``` json
