@@ -9,6 +9,7 @@ import (
 type ExecutePaymentResponse struct {
 	Success bool
 	Detail  string
+	TransNo string
 }
 
 type FundTransferExecutor interface {

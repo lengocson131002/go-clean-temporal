@@ -2,10 +2,14 @@ package cron
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
+	"time"
 
 	"github.com/lengocson131002/go-clean-core/logger"
+	"github.com/lengocson131002/go-clean-core/pipeline"
 	"github.com/lengocson131002/go-clean-core/transport/broker"
+	"github.com/lengocson131002/mcs-fund-transfer/domain"
 )
 
 const (
@@ -65,12 +69,25 @@ func WithCompleteFundTransferBackground() CronServerOption {
 					}
 
 					body := e.Message().Body
-					// var request domain.CompleteFundTransferRequest
-					// err = json.Unmarshal(body, &request)
-					// if err != nil {
-					// 	return *new(TRes), broker.InvalidDataFormatError{}
-					// }
-					cs.logger.Infof(ctx, "Receive account statement message: %s", string(body))
+					var request KafkaAccountStatementWrapper
+					err := json.Unmarshal(body, &request)
+					if err != nil {
+						return broker.InvalidDataFormatError{}
+					}
+
+					if request.OpType == "I" && request.After != nil {
+						pReq := domain.CompleteFundTransferRequest{
+							TransNo:    request.After.TransNo,
+							TransferAt: time.Now(),
+						}
+						ctx := context.Background()
+						res, err := pipeline.Send[*domain.CompleteFundTransferRequest, *domain.CompleteFundTransferResponse](ctx, &pReq)
+						if err != nil {
+							cs.logger.Errorf(ctx, "Complete fund transfer failed: %v", err.Error())
+						} else {
+							cs.logger.Errorf(ctx, "Completed fund transfer: %v", res)
+						}
+					}
 					return nil
 				})
 

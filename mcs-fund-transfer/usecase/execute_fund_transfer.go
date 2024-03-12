@@ -30,7 +30,7 @@ func (h *executeFundTransferHandler) Handle(ctx context.Context, req *domain.Exe
 		return nil, err
 	}
 
-	if trans == nil || trans.Status != domain.TransactionVerified {
+	if trans == nil || (trans.Status != domain.TransactionVerified) {
 		return nil, domain.ErrorTransactionNotFound
 	}
 
@@ -44,6 +44,7 @@ func (h *executeFundTransferHandler) Handle(ctx context.Context, req *domain.Exe
 	}
 
 	trans.Status = domain.TransactionProcessing
+	trans.TransNo = res.TransNo
 	err = h.fData.SaveFundTransferTransaction(ctx, trans)
 	if err != nil {
 		return nil, err

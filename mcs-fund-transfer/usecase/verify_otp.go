@@ -67,5 +67,7 @@ func (h *verifyOTPHandler) Handle(ctx context.Context, request *domain.VerifyFun
 
 	h.logger.Infof(ctx, "Signaled fund tranfer verified OTP. Workflow ID: %s", trans.WorflowId)
 
-	return &domain.VerifyFundTransferOTPResponse{}, nil
+	return &domain.VerifyFundTransferOTPResponse{
+		Success: true,
+	}, nil
 }

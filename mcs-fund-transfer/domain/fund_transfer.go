@@ -40,7 +40,7 @@ type VerifyFundTransferOTPRequest struct {
 }
 
 type VerifyFundTransferOTPResponse struct {
-	Success string `json:"success"`
+	Success bool `json:"success"`
 }
 
 type VerifyFundTransferOTPHandler interface {
@@ -60,13 +60,35 @@ type ExecuteFundTransferHandler interface {
 }
 
 type CompleteFundTransferRequest struct {
-	CRefNum    string    `json:"cRefNum"`
+	TransNo    string    `json:"transNo"`
 	TransferAt time.Time `json:"transferAt"`
 }
 
 type CompleteFundTransferResponse struct {
+	CrefNum string `json:"crefNum"`
+	TransNo string `json:"transNo"`
 }
 
 type CompleteFundTransferHandler interface {
 	Handle(context.Context, *CompleteFundTransferRequest) (*CompleteFundTransferResponse, error)
+}
+
+type QueryFundTransferRequest struct {
+	CrefNum string `json:"cRefNum"`
+}
+
+type QueryFundTransferResponse struct {
+	WorflowId   string             `json:"worflowId"`
+	FromAccount string             `json:"fromAccount"`
+	ToAccount   string             `json:"toAccount"`
+	Amount      int64              `json:"amount"`
+	CRefNum     string             `json:"cRefNum"`
+	CreatedAt   time.Time          `json:"createdAt"`
+	TransferAt  *time.Time         `json:"transferAt"`
+	Status      FundTransferStatus `json:"status"`
+	TransNo     string             `json:"transNo"`
+}
+
+type QueryFundTransferHandler interface {
+	Handle(context.Context, *QueryFundTransferRequest) (*QueryFundTransferResponse, error)
 }

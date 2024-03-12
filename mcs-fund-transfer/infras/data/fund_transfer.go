@@ -20,6 +20,41 @@ type fundTransferData struct {
 	esClient es.ElasticSearchClient
 }
 
+func (d *fundTransferData) GetFundTransferTransactionByTransNo(ctx context.Context, transNo string) (*domain.FunTransferTransaction, error) {
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match": map[string]interface{}{
+				"transNo": transNo,
+			},
+		},
+	}
+
+	output, err := d.esClient.Search(
+		ctx,
+		fmt.Sprintf("%s*", IndexFundTransfer),
+		es.WithSearchQuery(query),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(output) == 0 {
+		return nil, domain.ErrorTransactionNotFound
+	}
+
+	var trans domain.FunTransferTransaction
+	for _, v := range output {
+		err = util.MapStruct(v, &trans, util.WithDecodeTimeFormat(time.RFC3339Nano))
+		if err != nil {
+			return nil, err
+		}
+		return &trans, nil
+	}
+
+	return nil, nil
+}
+
 func (d *fundTransferData) GetFundTransferOTP(ctx context.Context, cRefNum string, otp string) (*domain.FundTransferOTP, error) {
 	query := map[string]interface{}{
 		"query": map[string]interface{}{

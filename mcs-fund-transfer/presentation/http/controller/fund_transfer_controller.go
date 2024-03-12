@@ -20,3 +20,7 @@ func (c *FundTransferController) FundTransfer(ctx *fiber.Ctx) error {
 func (c *FundTransferController) VerifyOTP(ctx *fiber.Ctx) error {
 	return handler.RequestHandler[*domain.VerifyFundTransferOTPRequest, *domain.VerifyFundTransferOTPResponse](ctx)
 }
+
+func (c *FundTransferController) QueryFundTransfer(ctx *fiber.Ctx) error {
+	return handler.RequestHandler[*domain.QueryFundTransferRequest, *domain.QueryFundTransferResponse](ctx)
+}

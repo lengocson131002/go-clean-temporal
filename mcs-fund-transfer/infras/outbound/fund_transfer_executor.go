@@ -165,6 +165,7 @@ func (f *fundTransferExecutor) ExecutePayment(ctx context.Context, req *domain.F
 	return &outbound.ExecutePaymentResponse{
 		Success: resBody.ExecutePaymentOut.TransactionInfo.TransactionErrorCode == "SUCCESS",
 		Detail:  resBody.ExecutePaymentOut.TransactionInfo.TransactionErrorMsg,
+		TransNo: resBody.ExecutePaymentOut.TransactionInfo.CoreRefNum2,
 	}, err
 
 }

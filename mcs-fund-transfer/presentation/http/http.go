@@ -86,20 +86,6 @@ func (s *HttpServer) Start(ctx context.Context, opts ...ServerOption) error {
 // OPTIONS
 type ServerOption func(*HttpServer) error
 
-func WithV1Routes() ServerOption {
-	return func(s *HttpServer) error {
-		var (
-			fApp  = s.app
-			fConn = s.fundTransferController
-		)
-		appV1 := fApp.Group("/api/v1")
-		appV1.Post("/fund-transfer/start", fConn.FundTransfer)
-		appV1.Post("/fund-transfer/verify-otp", fConn.VerifyOTP)
-		s.logger.Infof(context.Background(), "[Fiber] Register v1 routes")
-		return nil
-	}
-}
-
 func WithLoggings() ServerOption {
 	return func(s *HttpServer) error {
 		s.app.Use(fiberLog.New(fiberLog.Config{
@@ -155,6 +141,24 @@ func WithMetrics() ServerOption {
 		prometheus := fiberprometheus.New(s.cfg.Name)
 		prometheus.RegisterAt(s.app, "/metrics")
 		s.app.Use(prometheus.Middleware)
+		return nil
+	}
+}
+
+func WithRoutes() ServerOption {
+	return func(s *HttpServer) error {
+		var (
+			fApp  = s.app
+			fConn = s.fundTransferController
+		)
+
+		appV1 := fApp.Group("/api/v1")
+
+		appV1.Post("/fund-transfer/start", fConn.FundTransfer)
+		appV1.Post("/fund-transfer/verify-otp", fConn.VerifyOTP)
+		appV1.Get("/fund-transfer/query", fConn.QueryFundTransfer)
+
+		s.logger.Infof(context.Background(), "[Fiber] Register v1 routes")
 		return nil
 	}
 }

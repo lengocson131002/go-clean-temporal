@@ -2,15 +2,19 @@ package outbound
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/lengocson131002/mcs-fund-transfer/domain"
-	"github.com/lengocson131002/mcs-fund-transfer/pkg/workflow"
 	"github.com/lengocson131002/mcs-fund-transfer/usecase/outbound"
 	"go.temporal.io/sdk/client"
 )
 
 const (
-	FundTransferOTPVerifiedSignalName = "FUND_STRANSFER_OTP_VERIFIED"
+	FundTransferOTPVerifiedSignalName = "VERIFY_OTP_CHANNEL"
+	FundTransferResponseSignalName    = "CREATE_TRANSACTION_CHANNEL"
+	FundTransferWorkflow              = "TransferWorkflow"
+	FundTransferTaskQueue             = "TransferTaskQueue"
 )
 
 type fundTransferWorkflow struct {
@@ -28,11 +32,11 @@ func NewFundTransferWorkflow(
 // StartFundTransferWorkflow implements outbound.FundTransferWorkflow.
 func (w *fundTransferWorkflow) StartFundTransferWorkflow(ctx context.Context, req *domain.FunTransferTransaction) (*outbound.StartFundTransferWorkflowResponse, error) {
 	options := client.StartWorkflowOptions{
-		ID:        workflow.NewFundTransferWorkflowId(),
-		TaskQueue: workflow.FundTransferTaskQueue,
+		ID:        NewFundTransferWorkflowId(),
+		TaskQueue: FundTransferTaskQueue,
 	}
 
-	we, err := w.temClient.ExecuteWorkflow(ctx, options, workflow.FundTransferWorkflow, req)
+	we, err := w.temClient.ExecuteWorkflow(ctx, options, FundTransferWorkflow, req)
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +48,26 @@ func (w *fundTransferWorkflow) StartFundTransferWorkflow(ctx context.Context, re
 
 // SignalFundTransferVerifiedOTP implements outbound.FundTransferWorkflow.
 func (w *fundTransferWorkflow) SignalFundTransferVerifiedOTP(ctx context.Context, trans *domain.FunTransferTransaction) error {
-	err := w.temClient.SignalWorkflow(ctx, trans.WorflowId, "", FundTransferOTPVerifiedSignalName, nil)
+	err := w.temClient.SignalWorkflow(ctx, trans.WorflowId, "", FundTransferOTPVerifiedSignalName, trans)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// SignalFundTransferCompleted implements outbound.FundTransferWorkflow.
+func (w *fundTransferWorkflow) SignalFundTransferCompleted(ctx context.Context, trans *domain.FunTransferTransaction) error {
+	err := w.temClient.SignalWorkflow(ctx, trans.WorflowId, "", FundTransferResponseSignalName, trans)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewFundTransferWorkflowId() string {
+	return FundTransferWorkflow + fmt.Sprintf("%d", time.Now().Unix())
 }

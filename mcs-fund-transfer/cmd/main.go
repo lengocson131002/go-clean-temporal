@@ -44,6 +44,8 @@ var Module = fx.Module("main",
 	fx.Provide(usecase.NewVerifyOTPHandler),
 	fx.Provide(usecase.NewExecuteFundTransferHandler),
 	fx.Provide(usecase.NewGenerateFundTransferOTPHandler),
+	fx.Provide(usecase.NewCompleteFundTransferHandler),
+	fx.Provide(usecase.NewQueryFundTransferData),
 	fx.Invoke(bootstrap.RegisterPipelineBehaviors),
 	fx.Invoke(bootstrap.RegisterPipelineHandlers),
 
@@ -82,7 +84,7 @@ func run(
 					http.WithLoggings(),
 					http.WithTracing(),
 					http.WithMetrics(),
-					http.WithV1Routes(),
+					http.WithRoutes(),
 				)
 
 				if err != nil {

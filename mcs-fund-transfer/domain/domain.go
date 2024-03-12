@@ -20,6 +20,7 @@ type FunTransferTransaction struct {
 	CreatedAt   time.Time          `json:"createdAt"`
 	TransferAt  *time.Time         `json:"transferAt"`
 	Status      FundTransferStatus `json:"status"`
+	TransNo     string             `json:"transNo"`
 }
 
 type FundTransferOTP struct {

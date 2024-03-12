@@ -22,11 +22,15 @@ func RegisterPipelineHandlers(
 	generateFundTransferOTPHandler domain.GenerateFundTransferOTPHandler,
 	verifyOTPHandler domain.VerifyFundTransferOTPHandler,
 	executeFundTransferHandler domain.ExecuteFundTransferHandler,
+	completeFundTransferHandler domain.CompleteFundTransferHandler,
+	queryFundTransferHandler domain.QueryFundTransferHandler,
 ) {
 	pipeline.RegisterRequestHandler(startFundTransferHandler)
 	pipeline.RegisterRequestHandler(generateFundTransferOTPHandler)
 	pipeline.RegisterRequestHandler(verifyOTPHandler)
 	pipeline.RegisterRequestHandler(executeFundTransferHandler)
+	pipeline.RegisterRequestHandler(completeFundTransferHandler)
+	pipeline.RegisterRequestHandler(queryFundTransferHandler)
 }
 
 // ERROR HANDLING FOR RECOVERING FROM PANIC

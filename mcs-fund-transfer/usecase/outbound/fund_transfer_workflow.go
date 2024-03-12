@@ -20,4 +20,5 @@ type StartFundTransferWorkflowResponse struct {
 type FundTransferWorkflow interface {
 	StartFundTransferWorkflow(context.Context, *domain.FunTransferTransaction) (*StartFundTransferWorkflowResponse, error)
 	SignalFundTransferVerifiedOTP(context.Context, *domain.FunTransferTransaction) error
+	SignalFundTransferCompleted(context.Context, *domain.FunTransferTransaction) error
 }
