@@ -1,0 +1,174 @@
+basePath: /
+definitions:
+  domain.LoginUserRequest:
+    properties:
+      id:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    required:
+    - id
+    - password
+    type: object
+  domain.RegisterUserRequest:
+    properties:
+      id:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    required:
+    - id
+    - name
+    - password
+    type: object
+  domain.UpdateUserRequest:
+    properties:
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    type: object
+  domain.UserResponse:
+    properties:
+      created_at:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+  http.DataResponse-bool:
+    properties:
+      code:
+        type: integer
+      data:
+        type: boolean
+      message:
+        type: string
+    type: object
+  http.DataResponse-domain_UserResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/domain.UserResponse'
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: leson131002@gmail.com
+    name: LNS
+  description: CLEAN ARCHITECTURE DEMO
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: CLEAN ARCHITECTURE DEMO
+  version: "1.0"
+paths:
+  /api/v1/users:
+    put:
+      description: Update current user
+      parameters:
+      - description: ID string
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: UpdateUserRequest request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.DataResponse-domain_UserResponse'
+      summary: Update current user
+      tags:
+      - Users
+  /api/v1/users/login:
+    get:
+      description: Login User using ID and password
+      parameters:
+      - description: LoginUserRequest request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LoginUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.DataResponse-domain_UserResponse'
+      summary: Login
+      tags:
+      - Users
+  /api/v1/users/me:
+    delete:
+      description: Log out user
+      parameters:
+      - description: Token string
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.DataResponse-bool'
+      summary: Logout
+      tags:
+      - Users
+    get:
+      description: Get current user
+      parameters:
+      - description: Token string
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.DataResponse-domain_UserResponse'
+      summary: Current user
+      tags:
+      - Users
+  /api/v1/users/register:
+    post:
+      parameters:
+      - description: RegisterUserRequest request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RegisterUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.DataResponse-domain_UserResponse'
+      summary: Register user
+      tags:
+      - Users
+swagger: "2.0"
